@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "sky-alert"
+version = "0.1.0"
+description = "Alert that combines information from multiple data sources for what could be a potentially good stargazing / astrophotography night opportunity for your locale."
+authors = ["Rohan Sahgal <rohansahgal@hotmail.com>", "Chris Zhu <thereisnoaddress@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.105.0"
+uvicorn = "^0.24.0.post1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
