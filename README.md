@@ -30,7 +30,7 @@ SkyAlert is an application that provides real-time weather updates and alerts sp
 
 - Upon running the application, SkyAlert will fetch weather data and analyze it to determine if there is a potential stargazing or astrophotography opportunity in your locale.
 - If favorable conditions are detected, the application will send alerts to the configured notification methods.
-- Use the command-line interface to search for weather conditions inmasdfklajsdfkljasdklfjalksjd different locations or change notification settings.
+- Use the command-line interface to search for weather conditions in different locations or change notification settings.
 
 ## Contributing
 
