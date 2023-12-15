@@ -20,10 +20,29 @@ SkyAlert is an application that provides real-time weather updates and alerts sp
     git clone https://github.com/your-username/sky-alert.git
     ```
 
-2. Run the application:
+2. Create the virtual environment:
+    ```shell
+    python -m venv .venv
+    ```
+
+3. Refer to `pyproject.toml` to ensure proper version of Python is installed
+
+4. Install Poetry to your virtual environment
+    ```
+    pip install poetry
+    ```
+
+5. Run Poetry to install dependencies
+    ```
+    poetry install
+    ```
+
+6. Navigate into `sky_alert` directory
+
+7. Run the application:
 
     ```shell
-    uvicorn main:app --reload
+    uvicorn endpoint:app --reload
     ```
 
 ## Usage
