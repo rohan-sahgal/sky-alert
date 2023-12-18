@@ -26,13 +26,61 @@ def sun_data(lat: int = 0, lon: int = 0):
         "lon": lon,
         "appid": os.environ["OPENWEATHER_API_KEY"]
     }
+
+    api_url = os.environ["OPENWEATHER_API_URL"]
+
+    try:
+        res = requests.get(api_url, params=params, headers=headers)
+        
+        if res.status_code == 200:
+            json_data = res.json()
+            sun_data = get_sunrise_sunset_from_json(json_data)
+            return sun_data
+
+        elif res.status_code == 401:
+            print("error: Unauthorized")
+            return 401
+
+        elif res.status_code == 404:
+            print("error: Resource not found")
+            return 404
+
+        else:
+            print("error: Internal Server Error")
+            return 500
     
-    res = requests.get(os.environ["OPENWEATHER_API_URL"], params=params, headers=headers)
+    except requests.RequestException as e:
+        print("Request Error")
+        return 400
+    
+    except KeyError as e:
+        print("Key Error")
+        return 400
+    
+    except Exception as e:
+        print("Internal Server Error")
+        return 500
 
-    sunrise = datetime.datetime.utcfromtimestamp(res.json()['current']['sunrise'])
-    sunset = datetime.datetime.utcfromtimestamp(res.json()['current']['sunset'])
+def get_sunrise_sunset_from_json(json_data):
 
-    sun_data = SunData(sunrise, sunset)
+    sunrise = None
+    sunset = None
 
-    return sundata
+    # Check for key existence at different levels
+    if 'current' in json_data and isinstance(json_data['current'], dict):
+        current_data = json_data['current']
+        sunrise = current_data.get('sunrise')
+        sunset = current_data.get('sunset')
 
+    # Perform the necessary operations if sunrise and sunset are available
+    if sunrise is not None and sunset is not None:
+        sunrise_datetime = datetime.datetime.utcfromtimestamp(sunrise)
+        sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
+        return SunData(sunrise_datetime, sunset_datetime)
+
+    else:
+        
+        # Handle missing keys or structure change
+        # Perform necessary actions like setting default values or logging the issue
+        print("Error: Change in API response - consult documentation")
+        return None
