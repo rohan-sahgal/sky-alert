@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import requests
 import datetime
+from protocol import SunData
 
 load_dotenv()
 
@@ -13,8 +14,8 @@ app = FastAPI()
 def healthz():
     return 'OK'
 
-@app.get('/sunrise')
-def sunrise(lat=0, lon=0):
+@app.get('/sundata')
+def sun_data(lat=0, lon=0):
 
     headers = {
         'Content-Type': 'application/json',
@@ -31,4 +32,9 @@ def sunrise(lat=0, lon=0):
     sunrise = datetime.datetime.utcfromtimestamp(res.json()['current']['sunrise'])
     sunset = datetime.datetime.utcfromtimestamp(res.json()['current']['sunset'])
 
-    return (sunrise, sunset)
+    sundata = SunData(sunrise, sunset)
+
+    print(sundata)
+
+    return sundata
+
