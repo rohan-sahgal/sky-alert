@@ -14,8 +14,8 @@ app = FastAPI()
 def healthz():
     return 'OK'
 
-@app.get('/sundata')
-def sun_data(lat=0, lon=0):
+@app.get('/openweather_sun_data')
+def sun_data(lat: int = 0, lon: int = 0):
 
     headers = {
         'Content-Type': 'application/json',
@@ -32,9 +32,7 @@ def sun_data(lat=0, lon=0):
     sunrise = datetime.datetime.utcfromtimestamp(res.json()['current']['sunrise'])
     sunset = datetime.datetime.utcfromtimestamp(res.json()['current']['sunset'])
 
-    sundata = SunData(sunrise, sunset)
-
-    print(sundata)
+    sun_data = SunData(sunrise, sunset)
 
     return sundata
 
