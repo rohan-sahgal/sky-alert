@@ -1,6 +1,9 @@
 # Description
 
-Please include a summary of the changes and the related Jira issue. Please also include relevant motivation and context. 
+<!--[SKA-]() -->
+
+Please include a summary of the changes and a link to the related Jira above. Please also include relevant motivation and context. 
+
 
 ## Type of change
 
