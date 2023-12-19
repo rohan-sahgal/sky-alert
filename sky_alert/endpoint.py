@@ -32,7 +32,7 @@ def sun_data(lat: int = 0, lon: int = 0) -> SunData:
     try:
         res = requests.get(api_url, params=params, headers=headers)
         
-        if res.status_code == 200:
+        if 200 <= res.status_code <= 299:
             json_data = res.json()
             sun_data = get_sunrise_sunset_from_json(json_data)
             return sun_data
