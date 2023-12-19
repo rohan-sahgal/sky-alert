@@ -61,7 +61,9 @@ def sun_data(lat: int = 0, lon: int = 0) -> SunData:
         print("Internal Server Error")
         return 500
 
-def get_sunrise_sunset_from_json(json_data):
+from typing import Dict
+...
+def get_sunrise_sunset_from_json(json_data: Dict[str, str]) -> SunData:
 
     sunrise = None
     sunset = None
