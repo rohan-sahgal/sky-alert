@@ -15,7 +15,7 @@ def healthz():
     return 'OK'
 
 @app.get('/openweather_sun_data')
-def sun_data(lat: int = 0, lon: int = 0):
+def sun_data(lat: int = 0, lon: int = 0) -> SunData:
 
     headers = {
         'Content-Type': 'application/json',
