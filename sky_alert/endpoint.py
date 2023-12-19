@@ -73,7 +73,7 @@ def get_sunrise_sunset_from_json(json_data):
         sunset = current_data.get('sunset')
 
     # Perform the necessary operations if sunrise and sunset are available
-    if sunrise is not None and sunset is not None:
+    if sunrise and sunset:
         sunrise_datetime = datetime.datetime.utcfromtimestamp(sunrise)
         sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
         return SunData(sunrise_datetime, sunset_datetime)
