@@ -65,8 +65,6 @@ from typing import Dict
 ...
 def get_sunrise_sunset_from_json(json_data: Dict[str, str]) -> SunData:
 
-    sunrise = None
-    sunset = None
 
     # Check for key existence at different levels
     if 'current' in json_data and isinstance(json_data['current'], dict):
