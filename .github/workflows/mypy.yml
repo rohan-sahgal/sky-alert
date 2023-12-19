@@ -7,14 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     name: Mypy
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-    - name: Install Dependencies
-      run: |
-        pip install mypy
-    - name: mypy
-      run: |
-        mypy sky_alert/
+      - uses: actions/checkout@v1
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.11
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
+      - name: Install Dependencies
+        run: |
+          poetry install
+      - name: mypy
+        run: |
+          poetry run mypy sky_alert/
