@@ -10,8 +10,27 @@ python = "^3.11"
 fastapi = "^0.105.0"
 uvicorn = "^0.24.0.post1"
 python-dotenv = "^1.0.0"
+pre-commit = "^3.6.0"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
