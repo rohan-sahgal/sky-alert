@@ -18,7 +18,7 @@ jobs:
       - name: Install Dependencies
         run: |
           poetry install
-      - name: mypy
+      - name: Mypy
         run: |
           poetry run mypy sky_alert/
       - name: Lint with flake8
