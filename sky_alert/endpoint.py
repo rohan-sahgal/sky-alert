@@ -3,35 +3,32 @@ import os
 from dotenv import load_dotenv
 import requests
 import datetime
-from protocol import SunData
-from typing import Optional, Any
+from sky_alert.protocol import SunData
+from typing import Optional, Any, Union
+
 load_dotenv()
 
 app = FastAPI()
 
 
-@app.get('/healthz')
-def healthz():
-    return 'OK'
+@app.get("/healthz")  # type: ignore[misc]
+def healthz() -> str:
+    return "OK"
 
-@app.get('/openweather_sun_data')
-def sun_data(lat: int = 0, lon: int = 0) -> SunData:
 
+@app.get("/openweather_sun_data")  # type: ignore[misc]
+def sun_data(lat: int = 0, lon: int = 0) -> Union[SunData, int]:
     headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
     }
 
-    params = {
-        "lat": lat,
-        "lon": lon,
-        "appid": os.environ["OPENWEATHER_API_KEY"]
-    }
+    params = {"lat": lat, "lon": lon, "appid": os.environ["OPENWEATHER_API_KEY"]}
 
     api_url = os.environ["OPENWEATHER_API_URL"]
 
     try:
         res = requests.get(api_url, params=params, headers=headers)
-        
+
         if 200 <= res.status_code <= 299:
             json_data = res.json()
             sun_data = get_sunrise_sunset_from_json(json_data)
@@ -48,28 +45,28 @@ def sun_data(lat: int = 0, lon: int = 0) -> SunData:
         else:
             print("error: Internal Server Error")
             return 500
-    
+
     except requests.RequestException as e:
         print(f"Request Error: {e}")
         return 400
-    
+
     except KeyError as e:
         print(f"Key Error: {e}")
         return 400
-    
+
     except Exception as e:
         print(f"Internal Server Error: {e}")
         return 500
 
-def get_sunrise_sunset_from_json(json_data: Dict[str, Any]) -> Optional[SunData]:
 
+def get_sunrise_sunset_from_json(json_data: dict[str, Any]) -> SunData:
     sunrise, sunset = None, None
 
     # Check for key existence at different levels
-    if 'current' in json_data and isinstance(json_data['current'], dict):
-        current_data = json_data['current']
-        sunrise = current_data.get('sunrise')
-        sunset = current_data.get('sunset')
+    if "current" in json_data and isinstance(json_data["current"], dict):
+        current_data = json_data["current"]
+        sunrise = current_data.get("sunrise")
+        sunset = current_data.get("sunset")
 
     # Perform the necessary operations if sunrise and sunset are available
     if sunrise and sunset:
@@ -79,7 +76,6 @@ def get_sunrise_sunset_from_json(json_data: Dict[str, Any]) -> Optional[SunData]
 
         # Handle missing keys or structure change
         # Perform necessary actions like setting default values or logging the issue
-    raise KeyError("Sunrise/sunset data from OpenWeather does not match expected format.")
-
-
-
+    raise KeyError(
+        "Sunrise/sunset data from OpenWeather does not match expected format."
+    )
