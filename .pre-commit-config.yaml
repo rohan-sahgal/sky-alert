@@ -1,0 +1,10 @@
+repos:
+-   repo: https://github.com/ambv/black
+    rev: 23.7.0
+    hooks:
+    - id: black
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: '4daa14b'
+    hooks:
+    -   id: mypy
+        args: [--strict, --ignore-missing-imports]

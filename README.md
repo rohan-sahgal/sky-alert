@@ -42,9 +42,14 @@ SkyAlert is an application that provides real-time weather updates and alerts sp
     poetry install
     ```
 
-7. Navigate into `sky_alert` directory.
+7. Install pre-commit: 
+    ```
+    pre-commit install
+    ```
 
-8. Run the application:
+8. Navigate into `sky_alert` directory.
+
+9. Run the application:
 
     ```shell
     uvicorn endpoint:app --reload
