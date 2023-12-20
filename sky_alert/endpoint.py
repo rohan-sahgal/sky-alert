@@ -17,12 +17,12 @@ def healthz() -> str:
 
 
 @app.get("/openweather_sun_data")  # type: ignore[misc]
-def sun_data(lat: int = 0, lon: int = 0) -> Union[SunData, int]:
+def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
     headers = {
         "Content-Type": "application/json",
     }
 
-    params: dict[str, Union[int, str]] = {
+    params: dict[str, str] = {
         "lat": lat,
         "lon": lon,
         "appid": os.environ["OPENWEATHER_API_KEY"],
