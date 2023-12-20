@@ -22,7 +22,11 @@ def sun_data(lat: int = 0, lon: int = 0) -> Union[SunData, int]:
         "Content-Type": "application/json",
     }
 
-    params = {"lat": lat, "lon": lon, "appid": os.environ["OPENWEATHER_API_KEY"]}
+    params: dict[str, Union[int, str]] = {
+        "lat": lat,
+        "lon": lon,
+        "appid": os.environ["OPENWEATHER_API_KEY"],
+    }
 
     api_url = os.environ["OPENWEATHER_API_URL"]
 
