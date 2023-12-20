@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import requests
 import datetime
 from protocol import SunData
-
+from typing import Optional, Any
 load_dotenv()
 
 app = FastAPI()
@@ -61,7 +61,7 @@ def sun_data(lat: int = 0, lon: int = 0) -> SunData:
         print(f"Internal Server Error: {e}")
         return 500
 
-def get_sunrise_sunset_from_json(json_data: Dict[str, str]) -> SunData:
+def get_sunrise_sunset_from_json(json_data: Dict[str, Any]) -> Optional[SunData]:
 
     sunrise, sunset = None, None
 
