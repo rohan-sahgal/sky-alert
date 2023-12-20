@@ -50,21 +50,22 @@ def sun_data(lat: int = 0, lon: int = 0) -> SunData:
             return 500
     
     except requests.RequestException as e:
-        print("Request Error")
+        print(f"Request Error: {e}")
         return 400
     
     except KeyError as e:
-        print("Key Error")
+        print(f"Key Error: {e}")
         return 400
     
     except Exception as e:
-        print("Internal Server Error")
+        print(f"Internal Server Error: {e}")
         return 500
 
 from typing import Dict
 ...
 def get_sunrise_sunset_from_json(json_data: Dict[str, str]) -> SunData:
 
+    sunrise, sunset = None, None
 
     # Check for key existence at different levels
     if 'current' in json_data and isinstance(json_data['current'], dict):
@@ -78,9 +79,9 @@ def get_sunrise_sunset_from_json(json_data: Dict[str, str]) -> SunData:
         sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
         return SunData(sunrise_datetime, sunset_datetime)
 
-    else:
-        
         # Handle missing keys or structure change
         # Perform necessary actions like setting default values or logging the issue
-        print("Error: Change in API response - consult documentation")
-        return None
+    raise KeyError("Sunrise/sunset data from OpenWeather does not match expected format.")
+
+
+
