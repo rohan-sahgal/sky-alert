@@ -28,7 +28,7 @@ def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
         "appid": os.environ["OPENWEATHER_API_KEY"],
     }
 
-    api_url = os.environ["OPENWEATHER_API_URL1"]
+    api_url = os.environ["OPENWEATHER_API_URL"]
 
     try:
         res = requests.get(api_url, params=params, headers=headers)
