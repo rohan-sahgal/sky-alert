@@ -1,10 +1,10 @@
+import requests
 from fastapi import FastAPI
 import os
 from dotenv import load_dotenv
-import requests
 import datetime
 from sky_alert.protocol import SunData
-from typing import Optional, Any, Union
+from typing import Any, Union
 
 load_dotenv()
 
@@ -28,7 +28,7 @@ def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
         "appid": os.environ["OPENWEATHER_API_KEY"],
     }
 
-    api_url = os.environ["OPENWEATHER_API_URL"]
+    api_url = os.environ["OPENWEATHER_API_URL1"]
 
     try:
         res = requests.get(api_url, params=params, headers=headers)
