@@ -11,12 +11,12 @@ load_dotenv()
 app = FastAPI()
 
 
-@app.get("/healthz")  # type: ignore[misc]
+@app.get("/healthz")  # type: ignore
 def healthz() -> str:
     return "OK"
 
 
-@app.get("/openweather_sun_data")  # type: ignore[misc]
+@app.get("/openweather_sun_data")  # type: ignore
 def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
     headers = {
         "Content-Type": "application/json",
