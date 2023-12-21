@@ -12,11 +12,13 @@ app = FastAPI()
 
 
 @app.get("/healthz")  # type: ignore
+# https://stackoverflow.com/questions/75347974/mypy-untyped-decorator-makes-function-main-untyped-for-fastapi-routes
 def healthz() -> str:
     return "OK"
 
 
 @app.get("/openweather_sun_data")  # type: ignore
+# https://stackoverflow.com/questions/75347974/mypy-untyped-decorator-makes-function-main-untyped-for-fastapi-routes
 def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
     headers = {
         "Content-Type": "application/json",
