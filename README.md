@@ -55,6 +55,19 @@ SkyAlert is an application that provides real-time weather updates and alerts sp
     uvicorn endpoint:app --reload
     ```
 
+## Adding dependencies
+
+If you are adding an external dependency to the `pyproject.toml` file for Poetry, please run `poetry add <dependency>`. 
+
+## FAQ
+
+1. `mypy error: Library stubs not installed for "<library-name>" [import-untyped]`
+
+If you encounter this issue: 
+1.  make sure you have the stubs for the library installed in `pyproject.toml`. 
+2. Go to `.pre-commit-config.yaml`. 
+3. Under `mypy`, make sure that this stub dependecy is included in additional_dependencies. 
+
 ## Usage
 
 - Upon running the application, SkyAlert will fetch weather data and analyze it to determine if there is a potential stargazing or astrophotography opportunity in your locale.
