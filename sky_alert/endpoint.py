@@ -1,22 +1,24 @@
+import requests
 from fastapi import FastAPI
 import os
 from dotenv import load_dotenv
-import requests
 import datetime
 from sky_alert.protocol import SunData
-from typing import Optional, Any, Union
+from typing import Any, Union
 
 load_dotenv()
 
 app = FastAPI()
 
 
-@app.get("/healthz")  # type: ignore[misc]
+@app.get("/healthz")  # type: ignore
+# https://stackoverflow.com/questions/75347974/mypy-untyped-decorator-makes-function-main-untyped-for-fastapi-routes
 def healthz() -> str:
     return "OK"
 
 
-@app.get("/openweather_sun_data")  # type: ignore[misc]
+@app.get("/openweather_sun_data")  # type: ignore
+# https://stackoverflow.com/questions/75347974/mypy-untyped-decorator-makes-function-main-untyped-for-fastapi-routes
 def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
     headers = {
         "Content-Type": "application/json",
