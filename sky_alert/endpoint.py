@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import datetime
 from sky_alert.protocol import SunData
 from typing import Any, Union
+from fastapi import HTTPException
 
 load_dotenv()
 
@@ -41,28 +42,16 @@ def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
             return sun_data
 
         elif res.status_code == 401:
-            print("error: Unauthorized")
-            return 401
-
+            raise HTTPException(status_code=401, detail="Unauthorized access.")
         elif res.status_code == 404:
-            print("error: Resource not found")
-            return 404
-
+            raise HTTPException(status_code=404, detail="Resource not found.")
         else:
-            print("error: Internal Server Error")
-            return 500
+            raise HTTPException(status_code=500, detail="Internal Server Error.")
 
     except requests.RequestException as e:
-        print(f"Request Error: {e}")
-        return 400
-
+        raise HTTPException(status_code=400, detail=f"Request Error: {e}")
     except KeyError as e:
-        print(f"Key Error: {e}")
-        return 400
-
-    except Exception as e:
-        print(f"Internal Server Error: {e}")
-        return 500
+        raise HTTPException(status_code=400, detail=f"Key Error: {e}")
 
 
 def get_sunrise_sunset_from_json(json_data: dict[str, Any]) -> SunData:
