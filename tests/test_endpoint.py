@@ -17,7 +17,7 @@ class MockOpenweatherResponse:
         return self.json_data
 
 
-class TestEndpoints(unittest.TestCase):
+class TestSunEndpoints(unittest.TestCase):
     def setUp(self) -> None:
         self.client = TestClient(app)
 
