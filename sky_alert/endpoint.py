@@ -1,17 +1,14 @@
-import requests
 from fastapi import FastAPI
-import os
 from dotenv import load_dotenv
 from sky_alert.protocol import SunData, MoonData
 from typing import Union
-from sky_alert.openweather_service import (
-    get_sunrise_sunset_from_json,
-    get_moonrise_moonset_from_json,
-)
+from sky_alert.openweather_service import OpenweatherService
 
 load_dotenv()
 
 app = FastAPI()
+
+ows = OpenweatherService()
 
 
 @app.get("/healthz")  # type: ignore
@@ -23,93 +20,9 @@ def healthz() -> str:
 @app.get("/openweather_sun_data")  # type: ignore
 # https://stackoverflow.com/questions/75347974/mypy-untyped-decorator-makes-function-main-untyped-for-fastapi-routes
 def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
-    headers = {
-        "Content-Type": "application/json",
-    }
-
-    params: dict[str, str] = {
-        "lat": lat,
-        "lon": lon,
-        "appid": os.environ["OPENWEATHER_API_KEY"],
-    }
-
-    api_url = os.environ["OPENWEATHER_API_URL"]
-
-    try:
-        res = requests.get(api_url, params=params, headers=headers)
-
-        if 200 <= res.status_code <= 299:
-            json_data = res.json()
-            sun_data = get_sunrise_sunset_from_json(json_data)
-            return sun_data
-
-        elif res.status_code == 401:
-            print("error: Unauthorized")
-            return 401
-
-        elif res.status_code == 404:
-            print("error: Resource not found")
-            return 404
-
-        else:
-            print("error: Internal Server Error")
-            return 500
-
-    except requests.RequestException as e:
-        print(f"Request Error: {e}")
-        return 400
-
-    except KeyError as e:
-        print(f"Key Error: {e}")
-        return 400
-
-    except Exception as e:
-        print(f"Internal Server Error: {e}")
-        return 500
+    return ows.get_sunrise_sunset_from_json(lat=lat, lon=lon)
 
 
 @app.get("/openweather_moon_data")  # type: ignore
 def moon_data(lat: str = "0", lon: str = "0") -> Union[MoonData, int]:
-    headers = {
-        "Content-Type": "application/json",
-    }
-
-    params: dict[str, str] = {
-        "lat": lat,
-        "lon": lon,
-        "appid": os.environ["OPENWEATHER_API_KEY"],
-    }
-
-    api_url = os.environ["OPENWEATHER_API_URL"]
-
-    try:
-        res = requests.get(api_url, params=params, headers=headers)
-
-        if 200 <= res.status_code <= 299:
-            json_data = res.json()
-            moon_data = get_moonrise_moonset_from_json(json_data)
-            return moon_data
-
-        elif res.status_code == 401:
-            print("error: Unauthorized")
-            return 401
-
-        elif res.status_code == 404:
-            print("error: Resource not found")
-            return 404
-
-        else:
-            print("error: Internal Server Error")
-            return 500
-
-    except requests.RequestException as e:
-        print(f"Request Error: {e}")
-        return 400
-
-    except KeyError as e:
-        print(f"Key Error: {e}")
-        return 400
-
-    except Exception as e:
-        print(f"Internal Server Error: {e}")
-        return 500
+    return ows.get_moonrise_moonset_from_json(lat=lat, lon=lon)
