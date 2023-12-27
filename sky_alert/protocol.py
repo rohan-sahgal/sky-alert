@@ -17,3 +17,11 @@ class MoonData:
     moonrise: datetime.datetime
     moonset: datetime.datetime
     moonphase: float
+
+
+@dataclass
+class OpenweatherResponse:
+    """Class for generic responses"""
+
+    status_code: int
+    message: str
