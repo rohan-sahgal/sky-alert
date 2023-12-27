@@ -57,14 +57,12 @@ class OpenweatherService:
             sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
             return SunData(sunrise_datetime, sunset_datetime)
 
-            # Handle missing keys or structure change
-            # Perform necessary actions like setting default values or logging the issue
         raise KeyError(
             "Sunrise/sunset data from OpenWeather does not match expected format."
         )
 
     def get_moonrise_moonset_from_json(self, lat: str, lon: str) -> MoonData:
-        moonrise, moonset, moonphase = None, None, None
+        moonrise, moonset, moon_phase = None, None, None
 
         self.update_most_recent_weather(lat=lat, lon=lon)
 
@@ -75,18 +73,16 @@ class OpenweatherService:
             current_data = json_data["daily"][0]
             moonrise = current_data.get("moonrise")
             moonset = current_data.get("moonset")
-            moonphase = current_data.get("moon_phase")
+            moon_phase = current_data.get("moon_phase")
 
-        # Perform the necessary operations if moonrise and moonset are available
-        if moonrise and moonset and moonphase:
+        # Perform the necessary operations if moonrise/moonset/mooon phase are available
+        if moonrise and moonset and moon_phase:
             moonrise_datetime = datetime.datetime.utcfromtimestamp(moonrise)
             moonset_datetime = datetime.datetime.utcfromtimestamp(moonset)
-            return MoonData(moonrise_datetime, moonset_datetime, moonphase)
+            return MoonData(moonrise_datetime, moonset_datetime, moon_phase)
 
-            # Handle missing keys or structure change
-            # Perform necessary actions like setting default values or logging the issue
         raise KeyError(
-            "Moonrise/moonset/moonphase data from OpenWeather does not match expected format."
+            "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
         )
 
     def update_most_recent_weather(self, lat: str, lon: str) -> None:
