@@ -87,7 +87,7 @@ def get_sunrise_sunset_from_json(json_data: dict[str, Any]) -> SunData:
     )
 
 
-@app.get("/openweather_moon_data")  # type: ignore[misc]
+@app.get("/openweather_moon_data")  # type: ignore
 def moon_data(lat: str = "0", lon: str = "0") -> Union[MoonData, int]:
     headers = {
         "Content-Type": "application/json",
