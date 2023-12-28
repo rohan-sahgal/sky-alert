@@ -20,6 +20,13 @@ class MoonData:
 
 
 @dataclass
+class CloudData:
+    """Class for cloud cover percentage over the next 24 hours (inclusive of current hour)"""
+
+    cloud_cover: list[int]
+
+
+@dataclass
 class OpenweatherResponse:
     """Class for generic responses"""
 

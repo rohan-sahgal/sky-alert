@@ -2,7 +2,7 @@ import os
 import requests
 import datetime
 from typing import Any
-from sky_alert.protocol import SunData, MoonData, OpenweatherResponse
+from sky_alert.protocol import SunData, MoonData, CloudData, OpenweatherResponse
 
 
 class OpenweatherService:
@@ -38,7 +38,7 @@ class OpenweatherService:
         else:
             return OpenweatherResponse(res.status_code, "Error: Internal server error")
 
-    def get_sunrise_sunset_from_json(self, lat: str, lon: str) -> SunData:
+    def get_sun_data(self, lat: str, lon: str) -> SunData:
         sunrise, sunset = None, None
 
         self.update_most_recent_weather(lat=lat, lon=lon)
@@ -61,7 +61,7 @@ class OpenweatherService:
             "Sunrise/sunset data from OpenWeather does not match expected format."
         )
 
-    def get_moonrise_moonset_from_json(self, lat: str, lon: str) -> MoonData:
+    def get_moon_data(self, lat: str, lon: str) -> MoonData:
         moonrise, moonset, moon_phase = None, None, None
 
         self.update_most_recent_weather(lat=lat, lon=lon)
@@ -69,7 +69,7 @@ class OpenweatherService:
         json_data = self.most_recent_weather[(lat, lon)]
 
         # Check for key existence at different levels
-        if "current" in json_data and isinstance(json_data["current"], dict):
+        if "daily" in json_data and isinstance(json_data["daily"], dict):
             current_data = json_data["daily"][0]
             moonrise = current_data.get("moonrise")
             moonset = current_data.get("moonset")
@@ -84,6 +84,31 @@ class OpenweatherService:
         raise KeyError(
             "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
         )
+
+    def get_cloud_data(self, lat: str, lon: str) -> CloudData:
+        """Get the following 24 hours of cloud data (current hour inclusive)."""
+
+        cloud_data = []
+
+        self.update_most_recent_weather(lat=lat, lon=lon)
+
+        json_data = self.most_recent_weather[(lat, lon)]
+
+        # Check for key existence at different levels
+        if "hourly" in json_data and isinstance(json_data["hourly"], list):
+            current_data = json_data["hourly"]
+            for i in range(0, 24):
+                current_hourly_cloud_data = current_data[i].get("clouds")
+
+                if current_hourly_cloud_data:
+                    cloud_data.append(current_hourly_cloud_data)
+                else:
+                    raise KeyError(
+                        "Cloud data from OpenWeather does not match expected format!"
+                    )
+            return CloudData(cloud_cover=cloud_data)
+
+        raise KeyError("Cloud data from OpenWeather does not match expected format.")
 
     def update_most_recent_weather(self, lat: str, lon: str) -> None:
         if (lat, lon) not in self.most_recent_weather:
