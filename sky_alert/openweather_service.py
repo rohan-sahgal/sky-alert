@@ -4,6 +4,10 @@ import datetime
 from typing import Any
 from sky_alert.protocol import SunData, MoonData, OpenweatherResponse
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class OpenweatherService:
     def __init__(self) -> None:
