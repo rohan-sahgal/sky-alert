@@ -15,6 +15,7 @@ mypy = "^1.7.1"
 flake8 = "^6.1.0"
 requests = "^2.31.0"
 types-requests = "^2.31.0"
+pydantic = "^2.5.3"
 
 
 [build-system]
@@ -38,3 +39,9 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.mypy]
+python_version = "3.11"  # Replace with your Python version
+disallow_untyped_defs = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]

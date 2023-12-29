@@ -1,26 +1,27 @@
 from dataclasses import dataclass
-import datetime
+from datetime import datetime
+from pydantic import BaseModel
 
 
 @dataclass
-class SunData:
+class SunData(BaseModel):
     """Class for sunrise and sunset times."""
 
-    sunrise: datetime.datetime
-    sunset: datetime.datetime
+    sunrise: datetime
+    sunset: datetime
 
 
 @dataclass
-class MoonData:
+class MoonData(BaseModel):
     """Class for moonrise and moonset times."""
 
-    moonrise: datetime.datetime
-    moonset: datetime.datetime
+    moonrise: datetime
+    moonset: datetime
     moonphase: float
 
 
 @dataclass
-class OpenweatherResponse:
+class OpenweatherResponse(BaseModel):
     """Class for generic responses"""
 
     status_code: int
