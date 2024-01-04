@@ -3,6 +3,7 @@ import requests
 import datetime
 from typing import Any
 from sky_alert.protocol import SunData, MoonData, CloudData, OpenweatherResponse
+from sky_alert.constants import HOURS_IN_DAY
 
 
 class OpenweatherService:
@@ -109,7 +110,7 @@ class OpenweatherService:
         # Check for key existence at different levels
         if "hourly" in json_data and isinstance(json_data["hourly"], list):
             current_data = json_data["hourly"]
-            for i in range(0, 24):
+            for i in range(HOURS_IN_DAY):
                 current_hourly_cloud_data = current_data[i].get("clouds")
 
                 if current_hourly_cloud_data:

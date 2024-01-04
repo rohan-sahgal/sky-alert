@@ -34,7 +34,9 @@ def cloud_data(lat: str = "0", lon: str = "0") -> Union[CloudData, int]:
 
 
 @app.get("/get_and_write_openweather_data_to_file")  # type: ignore
-def get_and_write_openweather_data_to_file(lat: str = "0", lon: str = "0") -> None:
+def get_and_write_openweather_data_to_file(lat: str = "0", lon: str = "0") -> bool:
     ows.update_most_recent_weather(lat=lat, lon=lon)
     with open("most_recent_weather.json", "w") as f:
         json.dump(ows.most_recent_weather[(lat, lon)], f)
+        print("write to file succeeded")
+    return True
