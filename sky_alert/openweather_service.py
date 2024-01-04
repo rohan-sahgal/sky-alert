@@ -31,16 +31,24 @@ class OpenweatherService:
         if 200 <= res.status_code <= 299:
             json_data = res.json()
             self.most_recent_weather[(lat, lon)] = json_data
-            return OpenweatherResponse(res.status_code, "Success...")
+            return OpenweatherResponse(
+                status_code=res.status_code, message="Success..."
+            )
 
         elif res.status_code == 401:
-            return OpenweatherResponse(res.status_code, "Error: Unauthorized")
+            return OpenweatherResponse(
+                status_code=res.status_code, message="Error: Unauthorized"
+            )
 
         elif res.status_code == 404:
-            return OpenweatherResponse(res.status_code, "Error: Resource not found")
+            return OpenweatherResponse(
+                status_code=res.status_code, message="Error: Resource not found"
+            )
 
         else:
-            return OpenweatherResponse(res.status_code, "Error: Internal server error")
+            return OpenweatherResponse(
+                status_code=res.status_code, message="Error: Internal server error"
+            )
 
     def get_sunrise_sunset_from_json(self, lat: str, lon: str) -> SunData:
         sunrise, sunset = None, None
@@ -59,7 +67,7 @@ class OpenweatherService:
         if sunrise and sunset:
             sunrise_datetime = datetime.datetime.utcfromtimestamp(sunrise)
             sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
-            return SunData(sunrise_datetime, sunset_datetime)
+            return SunData(sunrise=sunrise_datetime, sunset=sunset_datetime)
 
         raise KeyError(
             "Sunrise/sunset data from OpenWeather does not match expected format."
@@ -83,7 +91,11 @@ class OpenweatherService:
         if moonrise and moonset and moon_phase:
             moonrise_datetime = datetime.datetime.utcfromtimestamp(moonrise)
             moonset_datetime = datetime.datetime.utcfromtimestamp(moonset)
-            return MoonData(moonrise_datetime, moonset_datetime, moon_phase)
+            return MoonData(
+                moonrise=moonrise_datetime,
+                moonset=moonset_datetime,
+                moonphase=moon_phase,
+            )
 
         raise KeyError(
             "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
