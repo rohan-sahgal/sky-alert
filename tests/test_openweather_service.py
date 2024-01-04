@@ -297,3 +297,20 @@ class TestMoonDataParsing(unittest.TestCase):
         # THEN
         self.assertTrue((sample_lat, sample_lon) in self.ows.most_recent_weather)
         self.assertFalse(mock_get.called)
+
+
+class TestCloudDataParsing(unittest.TestCase):
+    def setUp(self) -> None:
+        self.ows = OpenweatherService()
+
+    @patch("sky_alert.openweather_service.requests.get")
+    def test_get_hourly_cloud_data_from_json_update_not_called(
+        self, mock_get: Any
+    ) -> None:
+        # TODO
+        return True
+
+    @patch("sky_alert.openweather_service.requests.get")
+    def test_get_hourly_cloud_data_from_json_update_called(self, mock_get: Any) -> None:
+        # TODO
+        return True
