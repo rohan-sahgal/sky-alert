@@ -3,14 +3,14 @@ from pydantic import BaseModel, validator
 from typing import Type
 
 
-class SunData(BaseModel):  # type: ignore
+class SunData(BaseModel):
     """Class for sunrise and sunset times."""
 
     sunrise: datetime
     sunset: datetime
 
 
-class MoonData(BaseModel):  # type: ignore
+class MoonData(BaseModel):
     """Class for moonrise and moonset times."""
 
     moonrise: datetime
@@ -18,13 +18,13 @@ class MoonData(BaseModel):  # type: ignore
     moonphase: float
 
 
-class CloudData(BaseModel):  # type: ignore
+class CloudData(BaseModel):
     """Class for cloud cover percentage over the next 24 hours (inclusive of current hour)"""
 
     cloud_cover: list[int]
 
 
-class OpenweatherResponse(BaseModel):  # type: ignore
+class OpenweatherResponse(BaseModel):
     """Class for generic responses"""
 
     status_code: int
