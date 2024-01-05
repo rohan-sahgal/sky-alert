@@ -112,7 +112,7 @@ class TestSunDataParsing(unittest.TestCase):
         ] = MOCK_OPENWEATHER_RESPONSE_JSON
 
         # WHEN
-        response = self.ows.get_sunrise_sunset_from_json(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_sun_data(lat=sample_lat, lon=sample_lon)
 
         # THEN
         sunrise_datetime = datetime.datetime.utcfromtimestamp(
@@ -139,7 +139,7 @@ class TestSunDataParsing(unittest.TestCase):
         )
 
         # WHEN
-        response = self.ows.get_sunrise_sunset_from_json(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_sun_data(lat=sample_lat, lon=sample_lon)
 
         # THEN
         sunrise_datetime = datetime.datetime.utcfromtimestamp(
@@ -167,9 +167,7 @@ class TestSunDataParsing(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(KeyError):
-            response = self.ows.get_sunrise_sunset_from_json(
-                lat=sample_lat, lon=sample_lon
-            )
+            response = self.ows.get_sun_data(lat=sample_lat, lon=sample_lon)
 
 
 class TestMoonDataParsing(unittest.TestCase):
@@ -189,22 +187,19 @@ class TestMoonDataParsing(unittest.TestCase):
         ] = MOCK_OPENWEATHER_RESPONSE_JSON
 
         # WHEN
-        response = self.ows.get_moonrise_moonset_from_json(
-            lat=sample_lat, lon=sample_lon
-        )
+        response = self.ows.get_moon_data(lat=sample_lat, lon=sample_lon)
 
         # THEN
         moonrise_datetime = datetime.datetime.utcfromtimestamp(
-            MOCK_OPENWEATHER_RESPONSE_JSON["current"]["sunrise"]
+            MOCK_OPENWEATHER_RESPONSE_JSON["daily"][0]["moonrise"]
         )
         moonset_datetime = datetime.datetime.utcfromtimestamp(
-            MOCK_OPENWEATHER_RESPONSE_JSON["current"]["sunset"]
+            MOCK_OPENWEATHER_RESPONSE_JSON["daily"][0]["moonset"]
         )
+        moon_phase = MOCK_OPENWEATHER_RESPONSE_JSON["daily"][0]["moon_phase"]
         self.assertEqual(response.moonrise, moonrise_datetime)
         self.assertEqual(response.moonset, moonset_datetime)
-        self.assertEqual(
-            response.moonphase, MOCK_OPENWEATHER_RESPONSE_JSON["daily"][0]["moon_phase"]
-        )
+        self.assertEqual(response.moonphase, moon_phase)
 
         # mock_get shouldn't have been called since we have data with sample_lat and sample_lon
         self.assertFalse(mock_get.called)
@@ -220,18 +215,19 @@ class TestMoonDataParsing(unittest.TestCase):
             json_data=mock_json_data, status_code=200
         )
 
+        response = mock_get.return_value
+
         # WHEN
-        response = self.ows.get_moonrise_moonset_from_json(
-            lat=sample_lat, lon=sample_lon
-        )
+        response = self.ows.get_moon_data(lat=sample_lat, lon=sample_lon)
 
         # THEN
         moonrise_datetime = datetime.datetime.utcfromtimestamp(
-            MOCK_OPENWEATHER_RESPONSE_JSON["current"]["sunrise"]
+            MOCK_OPENWEATHER_RESPONSE_JSON["daily"][0]["moonrise"]
         )
         moonset_datetime = datetime.datetime.utcfromtimestamp(
-            MOCK_OPENWEATHER_RESPONSE_JSON["current"]["sunset"]
+            MOCK_OPENWEATHER_RESPONSE_JSON["daily"][0]["moonset"]
         )
+
         self.assertEqual(response.moonrise, moonrise_datetime)
         self.assertEqual(response.moonset, moonset_datetime)
         self.assertEqual(
@@ -254,9 +250,7 @@ class TestMoonDataParsing(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(KeyError):
-            response = self.ows.get_moonrise_moonset_from_json(
-                lat=sample_lat, lon=sample_lon
-            )
+            response = self.ows.get_moon_data(lat=sample_lat, lon=sample_lon)
 
     @patch("sky_alert.openweather_service.requests.get")
     def test_update_most_recent_weather_with_no_data(self, mock_get: Any) -> None:
@@ -308,6 +302,7 @@ class TestCloudDataParsing(unittest.TestCase):
         self, mock_get: Any
     ) -> None:
         # TODO
+        # poetry run pytest
         return True
 
     @patch("sky_alert.openweather_service.requests.get")
