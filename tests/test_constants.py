@@ -1,6 +1,4 @@
-from typing import Any
-
-MOCK_OPENWEATHER_RESPONSE_JSON: dict[str, Any] = {
+MOCK_OPENWEATHER_RESPONSE_JSON = {
     "current": {
         "dt": 1684929490,
         "sunrise": 1684926645,
