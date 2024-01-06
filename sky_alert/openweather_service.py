@@ -82,7 +82,7 @@ class OpenweatherService:
         json_data = self.most_recent_weather[(lat, lon)]
 
         # Check for key existence at different levels
-        if "daily" in json_data and isinstance(json_data["daily"], dict):
+        if "daily" in json_data and isinstance(json_data["daily"], list):
             current_data = json_data["daily"][0]
             moonrise = current_data.get("moonrise")
             moonset = current_data.get("moonset")
@@ -97,7 +97,6 @@ class OpenweatherService:
                 moonset=moonset_datetime,
                 moonphase=moon_phase,
             )
-
         raise KeyError(
             "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
         )
