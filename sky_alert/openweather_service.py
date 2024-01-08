@@ -78,7 +78,7 @@ class OpenweatherService:
         json_data = self.most_recent_weather[(lat, lon)]
         print(json_data)
         # Check for key existence at different levels
-        if "daily" in json_data and isinstance(json_data["daily"], dict):
+        if "daily" in json_data and isinstance(json_data["daily"], list):
             current_data = json_data["daily"][0]
             moonrise = current_data.get("moonrise")
             moonset = current_data.get("moonset")
@@ -133,3 +133,6 @@ class OpenweatherService:
         sun_data = self.get_sun_data(lat=lat, lon=lon)
         moon_data = self.get_moon_data(lat=lat, lon=lon)
         cloud_data = self.get_cloud_data(lat=lat, lon=lon)
+        print(sun_data)
+        print(moon_data)
+        print(cloud_data)
