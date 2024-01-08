@@ -40,3 +40,8 @@ def get_and_write_openweather_data_to_file(lat: str = "0", lon: str = "0") -> bo
         json.dump(ows.most_recent_weather[(lat, lon)], f)
         print("write to file succeeded")
     return True
+
+
+@app.get("/print_most_recent_weather")  # type: ignore
+def print_most_recent_weather(lat: str = "0", lon: str = "0") -> None:
+    ows.print_relevant_weather(lat=lat, lon=lon)
