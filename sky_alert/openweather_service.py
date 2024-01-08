@@ -76,7 +76,7 @@ class OpenweatherService:
         self.update_most_recent_weather(lat=lat, lon=lon)
 
         json_data = self.most_recent_weather[(lat, lon)]
-        print(json_data)
+
         # Check for key existence at different levels
         if "daily" in json_data and isinstance(json_data["daily"], list):
             current_data = json_data["daily"][0]
