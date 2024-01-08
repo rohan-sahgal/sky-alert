@@ -5,6 +5,10 @@ from typing import Any
 from sky_alert.protocol import SunData, MoonData, CloudData, OpenweatherResponse
 from sky_alert.constants import HOURS_IN_DAY
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class OpenweatherService:
     def __init__(self) -> None:
@@ -76,9 +80,9 @@ class OpenweatherService:
         self.update_most_recent_weather(lat=lat, lon=lon)
 
         json_data = self.most_recent_weather[(lat, lon)]
-        print(json_data)
+
         # Check for key existence at different levels
-        if "daily" in json_data and isinstance(json_data["daily"], dict):
+        if "daily" in json_data and isinstance(json_data["daily"], list):
             current_data = json_data["daily"][0]
             moonrise = current_data.get("moonrise")
             moonset = current_data.get("moonset")
@@ -93,7 +97,6 @@ class OpenweatherService:
                 moonset=moonset_datetime,
                 moonphase=moon_phase,
             )
-
         raise KeyError(
             "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
         )
@@ -112,7 +115,8 @@ class OpenweatherService:
             current_data = json_data["hourly"]
             for i in range(HOURS_IN_DAY):
                 current_hourly_cloud_data = current_data[i].get("clouds")
-                if current_hourly_cloud_data is not None:
+
+                if current_hourly_cloud_data:
                     cloud_data.append(current_hourly_cloud_data)
                 else:
                     raise KeyError(
@@ -128,8 +132,3 @@ class OpenweatherService:
 
             if not (200 <= res.status_code <= 299):
                 raise Exception(f"Error: {res.status_code}, {res.message}")
-
-    def print_relevant_weather(self, lat: str, lon: str) -> None:
-        sun_data = self.get_sun_data(lat=lat, lon=lon)
-        moon_data = self.get_moon_data(lat=lat, lon=lon)
-        cloud_data = self.get_cloud_data(lat=lat, lon=lon)
