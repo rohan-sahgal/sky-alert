@@ -47,7 +47,7 @@ class OpenweatherService:
                 status_code=res.status_code, message="Error: Internal server error"
             )
 
-    def get_sun_data(self, lat: str, lon: str) -> SunData:
+    def get_sun_data_today(self, lat: str, lon: str) -> SunData:
         sunrise, sunset = None, None
 
         self.update_most_recent_weather(lat=lat, lon=lon)
@@ -70,7 +70,30 @@ class OpenweatherService:
             "Sunrise/sunset data from OpenWeather does not match expected format."
         )
 
-    def get_moon_data(self, lat: str, lon: str) -> MoonData:
+    def get_sun_data_next_day(self, lat: str, lon: str) -> SunData:
+        sunrise, sunset = None, None
+
+        self.update_most_recent_weather(lat=lat, lon=lon)
+
+        json_data = self.most_recent_weather[(lat, lon)]
+
+        # Check for key existence at different levels
+        if "daily" in json_data and isinstance(json_data["daily"], list):
+            current_data = json_data["daily"]
+            sunrise = current_data[1].get("sunrise")
+            sunset = current_data[1].get("sunset")
+
+        # Perform the necessary operations if sunrise and sunset are available
+        if sunrise and sunset:
+            sunrise_datetime = datetime.datetime.utcfromtimestamp(sunrise)
+            sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
+            return SunData(sunrise=sunrise_datetime, sunset=sunset_datetime)
+
+        raise KeyError(
+            "Sunrise/sunset data from OpenWeather does not match expected format."
+        )
+
+    def get_moon_data_today(self, lat: str, lon: str) -> MoonData:
         moonrise, moonset, moon_phase = None, None, None
 
         self.update_most_recent_weather(lat=lat, lon=lon)
@@ -85,7 +108,7 @@ class OpenweatherService:
             moon_phase = current_data.get("moon_phase")
 
         # Perform the necessary operations if moonrise/moonset/mooon phase are available
-        if moonrise and moonset and moon_phase:
+        if all((moonrise, moonset, moon_phase)) is not None:
             moonrise_datetime = datetime.datetime.utcfromtimestamp(moonrise)
             moonset_datetime = datetime.datetime.utcfromtimestamp(moonset)
             return MoonData(
@@ -98,7 +121,35 @@ class OpenweatherService:
             "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
         )
 
-    def get_cloud_data(self, lat: str, lon: str) -> CloudData:
+    def get_moon_data_next_day(self, lat: str, lon: str) -> MoonData:
+        moonrise, moonset, moon_phase = None, None, None
+
+        self.update_most_recent_weather(lat=lat, lon=lon)
+
+        json_data = self.most_recent_weather[(lat, lon)]
+
+        # Check for key existence at different levels
+        if "daily" in json_data and isinstance(json_data["daily"], list):
+            current_data = json_data["daily"][1]
+            moonrise = current_data.get("moonrise")
+            moonset = current_data.get("moonset")
+            moon_phase = current_data.get("moon_phase")
+
+        # Perform the necessary operations if moonrise/moonset/mooon phase are available
+        if all((moonrise, moonset, moon_phase)) is not None:
+            moonrise_datetime = datetime.datetime.utcfromtimestamp(moonrise)
+            moonset_datetime = datetime.datetime.utcfromtimestamp(moonset)
+            return MoonData(
+                moonrise=moonrise_datetime,
+                moonset=moonset_datetime,
+                moonphase=moon_phase,
+            )
+
+        raise KeyError(
+            "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
+        )
+
+    def get_cloud_data_24_hours(self, lat: str, lon: str) -> CloudData:
         """Get the following 24 hours of cloud data (current hour inclusive)."""
 
         cloud_data = []
@@ -130,9 +181,52 @@ class OpenweatherService:
                 raise Exception(f"Error: {res.status_code}, {res.message}")
 
     def print_relevant_weather(self, lat: str, lon: str) -> None:
-        sun_data = self.get_sun_data(lat=lat, lon=lon)
-        moon_data = self.get_moon_data(lat=lat, lon=lon)
-        cloud_data = self.get_cloud_data(lat=lat, lon=lon)
-        print(sun_data)
-        print(moon_data)
-        print(cloud_data)
+        sun_data_today = self.get_sun_data_today(lat=lat, lon=lon)
+        sun_data_next_day = self.get_sun_data_next_day(lat=lat, lon=lon)
+        moon_data_today = self.get_moon_data_today(lat=lat, lon=lon)
+        moon_data_next_day = self.get_moon_data_next_day(lat=lat, lon=lon)
+        cloud_data_24_hours = self.get_cloud_data_24_hours(lat=lat, lon=lon)
+        print(sun_data_today)
+        print(sun_data_next_day)
+        print(moon_data_today)
+        print(moon_data_next_day)
+        print(cloud_data_24_hours)
+
+    def check_next_24_hours(self, lat: str, lon: str):
+        return False
+
+        # intervals = []
+        # for i in range(HOURS_IN_DAY):
+        #     if self.sun_criteria_valid(i, lat, lon) and self.moon_criteria_valid(i, lat, lon) and self.cloud_criteria_valid(i, lat, lon):
+        #         intervals.append(i)
+
+        # return intervals
+
+    # TODO: Time interval argument??
+
+    def sun_criteria_valid(self, i: int, lat: str, lon: str):
+        # Check if any time interval given falls between a sunset -> sunrise interval
+
+        sun_data_today = (
+            self.get_sun_data_today()
+        )  # not necessarily today or tomorrow, generalize function to check any period
+        sun_data_next_day = self.get_sun_data_next_day()
+
+        # If so, return True
+        # Else, return False
+
+    def moon_criteria_valid():
+        return False
+        # Check if falls between moonset -> moonrise interval
+        # If check fails, check moon phase
+        # If moon phase below threshold, return True
+        # Else, return False
+        # Else, return True
+
+    def cloud_criteria_valid():
+        return False
+        # TODO: Rework such that we get new 24 hour range when the hour changes
+
+        # Check if current time interval has cloud level below threshold
+        # If so, return True
+        # Else, return False
