@@ -116,7 +116,7 @@ class OpenweatherService:
             for i in range(HOURS_IN_DAY):
                 current_hourly_cloud_data = current_data[i].get("clouds")
 
-                if current_hourly_cloud_data:
+                if current_hourly_cloud_data is not None:
                     cloud_data.append(current_hourly_cloud_data)
                 else:
                     raise KeyError(
