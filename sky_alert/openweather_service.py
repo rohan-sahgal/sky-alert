@@ -4,6 +4,15 @@ import datetime
 from typing import Any
 from sky_alert.protocol import SunData, MoonData, CloudData, OpenweatherResponse
 from sky_alert.constants import HOURS_IN_DAY
+import logging
+import logging.config
+
+# Load the logging configuration
+logging.config.fileConfig("logging.ini")
+
+# Create a logger
+logger = logging.getLogger(__name__)
+
 
 from dotenv import load_dotenv
 
@@ -27,6 +36,7 @@ class OpenweatherService:
 
         api_url = os.environ["OPENWEATHER_API_URL"]
 
+        logger.info("making call to OpenWeather for data...")
         res = requests.get(api_url, params=params, headers=headers)
 
         if 200 <= res.status_code <= 299:
@@ -37,16 +47,19 @@ class OpenweatherService:
             )
 
         elif res.status_code == 401:
+            logger.error("OpenWeather call error: unauthorized.")
             return OpenweatherResponse(
                 status_code=res.status_code, message="Error: Unauthorized"
             )
 
         elif res.status_code == 404:
+            logger.error("OpenWeather call error: resource not found.")
             return OpenweatherResponse(
                 status_code=res.status_code, message="Error: Resource not found"
             )
 
         else:
+            logger.error("OpenWeather call error: internal server error.")
             return OpenweatherResponse(
                 status_code=res.status_code, message="Error: Internal server error"
             )
@@ -70,6 +83,9 @@ class OpenweatherService:
             sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
             return SunData(sunrise=sunrise_datetime, sunset=sunset_datetime)
 
+        logger.error(
+            "Sunrise/sunset data from OpenWeather does not match expected format."
+        )
         raise KeyError(
             "Sunrise/sunset data from OpenWeather does not match expected format."
         )
@@ -97,6 +113,10 @@ class OpenweatherService:
                 moonset=moonset_datetime,
                 moonphase=moon_phase,
             )
+
+        logger.error(
+            "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
+        )
         raise KeyError(
             "Moonrise/moonset/moon phase data from OpenWeather does not match expected format."
         )
@@ -119,6 +139,9 @@ class OpenweatherService:
                 if current_hourly_cloud_data is not None:
                     cloud_data.append(current_hourly_cloud_data)
                 else:
+                    logger.error(
+                        "Cloud data from OpenWeather does not match expected format!"
+                    )
                     raise KeyError(
                         "Cloud data from OpenWeather does not match expected format!"
                     )
