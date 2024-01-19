@@ -1,6 +1,6 @@
 import os
 import requests
-import datetime
+from datetime import datetime, timedelta
 from typing import Any
 from sky_alert.protocol import SunData, MoonData, CloudData, OpenweatherResponse
 from sky_alert.constants import HOURS_IN_DAY
@@ -62,8 +62,8 @@ class OpenweatherService:
 
         # Perform the necessary operations if sunrise and sunset are available
         if sunrise and sunset:
-            sunrise_datetime = datetime.datetime.utcfromtimestamp(sunrise)
-            sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
+            sunrise_datetime = datetime.utcfromtimestamp(sunrise)
+            sunset_datetime = datetime.utcfromtimestamp(sunset)
             return SunData(sunrise=sunrise_datetime, sunset=sunset_datetime)
 
         raise KeyError(
@@ -85,8 +85,8 @@ class OpenweatherService:
 
         # Perform the necessary operations if sunrise and sunset are available
         if sunrise and sunset:
-            sunrise_datetime = datetime.datetime.utcfromtimestamp(sunrise)
-            sunset_datetime = datetime.datetime.utcfromtimestamp(sunset)
+            sunrise_datetime = datetime.utcfromtimestamp(sunrise)
+            sunset_datetime = datetime.utcfromtimestamp(sunset)
             return SunData(sunrise=sunrise_datetime, sunset=sunset_datetime)
 
         raise KeyError(
@@ -109,8 +109,8 @@ class OpenweatherService:
 
         # Perform the necessary operations if moonrise/moonset/mooon phase are available
         if all((moonrise, moonset, moon_phase)) is not None:
-            moonrise_datetime = datetime.datetime.utcfromtimestamp(moonrise)
-            moonset_datetime = datetime.datetime.utcfromtimestamp(moonset)
+            moonrise_datetime = datetime.utcfromtimestamp(moonrise)
+            moonset_datetime = datetime.utcfromtimestamp(moonset)
             return MoonData(
                 moonrise=moonrise_datetime,
                 moonset=moonset_datetime,
@@ -137,8 +137,8 @@ class OpenweatherService:
 
         # Perform the necessary operations if moonrise/moonset/mooon phase are available
         if all((moonrise, moonset, moon_phase)) is not None:
-            moonrise_datetime = datetime.datetime.utcfromtimestamp(moonrise)
-            moonset_datetime = datetime.datetime.utcfromtimestamp(moonset)
+            moonrise_datetime = datetime.utcfromtimestamp(moonrise)
+            moonset_datetime = datetime.utcfromtimestamp(moonset)
             return MoonData(
                 moonrise=moonrise_datetime,
                 moonset=moonset_datetime,
@@ -192,28 +192,36 @@ class OpenweatherService:
         print(moon_data_next_day)
         print(cloud_data_24_hours)
 
-    def check_next_24_hours(self, lat: str, lon: str):
-        return False
+    def check_next_24_hours(self, lat: str, lon: str) -> list[datetime]:
+        intervals = []
+        curr_dt = datetime.now()  # current datetime
+        curr_dt_top_of_hour = curr_dt.replace(microsecond=0, second=0, minute=0)
+        for i in range(0, HOURS_IN_DAY):
+            hour_i = curr_dt_top_of_hour + timedelta(hours=i)
+            if self.sun_criteria_valid(hour_i, lat, lon):
+                # and self.moon_criteria_valid(hour_i, lat, lon) and self.cloud_criteria_valid(hour_i, lat, lon):
+                intervals.append(hour_i)
 
-        # intervals = []
-        # for i in range(HOURS_IN_DAY):
-        #     if self.sun_criteria_valid(i, lat, lon) and self.moon_criteria_valid(i, lat, lon) and self.cloud_criteria_valid(i, lat, lon):
-        #         intervals.append(i)
+        return intervals
 
-        # return intervals
-
-    # TODO: Time interval argument??
-
-    def sun_criteria_valid(self, i: int, lat: str, lon: str):
+    def sun_criteria_valid(self, hour: int, lat: str, lon: str):
         # Check if any time interval given falls between a sunset -> sunrise interval
 
-        sun_data_today = (
-            self.get_sun_data_today()
+        sun_data_today = self.get_sun_data_today(
+            lat=lat, lon=lon
         )  # not necessarily today or tomorrow, generalize function to check any period
-        sun_data_next_day = self.get_sun_data_next_day()
+        sun_data_next_day = self.get_sun_data_next_day(lat=lat, lon=lon)
 
-        # If so, return True
-        # Else, return False
+        sunrise_today = sun_data_today.sunrise
+        sunset_today = sun_data_today.sunset
+        sunrise_next_day = sun_data_next_day.sunrise
+        sunset_next_day = sun_data_next_day.sunset
+
+        return (
+            (hour < sunrise_today)
+            or (sunset_today < hour < sunrise_next_day)
+            or (sunset_next_day < hour)
+        )
 
     def moon_criteria_valid():
         return False

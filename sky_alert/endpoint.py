@@ -55,3 +55,8 @@ def get_and_write_openweather_data_to_file(lat: str = "0", lon: str = "0") -> bo
 @app.get("/print_most_recent_weather")  # type: ignore
 def print_most_recent_weather(lat: str = "0", lon: str = "0") -> None:
     ows.print_relevant_weather(lat=lat, lon=lon)
+
+
+@app.get("/print_valid_hours_for_next_24_hours")  # type: ignore
+def print_valid_hours_for_next_24_hours(lat: str = "0", lon: str = "0") -> None:
+    print(ows.check_next_24_hours(lat=lat, lon=lon))
