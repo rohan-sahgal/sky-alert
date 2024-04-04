@@ -59,4 +59,4 @@ def print_most_recent_weather(lat: str = "0", lon: str = "0") -> None:
 
 @app.get("/print_valid_hours_for_next_24_hours")  # type: ignore
 def print_valid_hours_for_next_24_hours(lat: str = "0", lon: str = "0") -> None:
-    print(ows.check_next_24_hours(lat=lat, lon=lon))
+    ows.check_next_24_hours(lat=lat, lon=lon)

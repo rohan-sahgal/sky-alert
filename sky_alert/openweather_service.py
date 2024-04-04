@@ -3,7 +3,7 @@ import requests
 from datetime import datetime, timedelta
 from typing import Any
 from sky_alert.protocol import SunData, MoonData, CloudData, OpenweatherResponse
-from sky_alert.constants import HOURS_IN_DAY
+from sky_alert.constants import HOURS_IN_DAY, MOON_PHASE_THRESHOLD
 
 
 class OpenweatherService:
@@ -192,19 +192,21 @@ class OpenweatherService:
         print(moon_data_next_day)
         print(cloud_data_24_hours)
 
-    def check_next_24_hours(self, lat: str, lon: str) -> list[datetime]:
+    def check_next_24_hours(self, lat: str, lon: str) -> None:
         intervals = []
-        curr_dt = datetime.now()  # current datetime
+        curr_dt = datetime.utcnow()  # current datetime
         curr_dt_top_of_hour = curr_dt.replace(microsecond=0, second=0, minute=0)
+        print(curr_dt_top_of_hour)
         for i in range(0, HOURS_IN_DAY):
             hour_i = curr_dt_top_of_hour + timedelta(hours=i)
-            if self.sun_criteria_valid(hour_i, lat, lon):
-                # and self.moon_criteria_valid(hour_i, lat, lon) and self.cloud_criteria_valid(hour_i, lat, lon):
+            # if self.sun_criteria_valid(hour_i, lat, lon):
+            if self.moon_criteria_valid(hour_i, lat, lon):
+                # and self.cloud_criteria_valid(hour_i, lat, lon):
                 intervals.append(hour_i)
 
-        return intervals
+        print(intervals)
 
-    def sun_criteria_valid(self, hour: int, lat: str, lon: str):
+    def sun_criteria_valid(self, hour: datetime, lat: str, lon: str) -> bool:
         # Check if any time interval given falls between a sunset -> sunrise interval
 
         sun_data_today = self.get_sun_data_today(
@@ -223,13 +225,48 @@ class OpenweatherService:
             or (sunset_next_day < hour)
         )
 
-    def moon_criteria_valid():
+    def moon_criteria_valid(self, hour: datetime, lat: str, lon: str) -> bool:
+        moon_data_today = self.get_moon_data_today(lat=lat, lon=lon)
+        moon_data_next_day = self.get_moon_data_next_day(lat=lat, lon=lon)
+
+        moonrise_today = moon_data_today.moonrise
+        moonset_today = moon_data_today.moonset
+        moonphase_today = moon_data_today.moonphase
+        moonrise_next_day = moon_data_next_day.moonrise
+        moonset_next_day = moon_data_next_day.moonset
+        moonphase_next_day = moon_data_next_day.moonphase
+
+        print(hour)
+        print(moonrise_today)
+        print(moonset_today)
+        print(moonphase_today)
+        print(moonrise_next_day)
+        print(moonset_next_day)
+        print(moonphase_next_day)
+        print("\n")
+
+        # IF MOON IS DOWN
+        if (
+            (hour < moonrise_today)
+            or (moonset_today < hour < moonrise_next_day)
+            or (moonset_next_day < hour)
+        ):
+            return True
+
+        # IF MOON IS UP
+        else:
+            if hour.date() == moon_data_today.moonrise.date():
+                return (
+                    1 - MOON_PHASE_THRESHOLD < moonphase_today
+                    or moonphase_today < MOON_PHASE_THRESHOLD
+                )
+            elif hour.date() == moon_data_next_day.moonrise.date():
+                return (
+                    1 - MOON_PHASE_THRESHOLD < moonphase_next_day
+                    or moonphase_next_day < MOON_PHASE_THRESHOLD
+                )
+
         return False
-        # Check if falls between moonset -> moonrise interval
-        # If check fails, check moon phase
-        # If moon phase below threshold, return True
-        # Else, return False
-        # Else, return True
 
     def cloud_criteria_valid():
         return False
