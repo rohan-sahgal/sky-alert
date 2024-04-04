@@ -35,3 +35,12 @@ class OpenweatherResponse(BaseModel):
         if not (100 <= value <= 599):
             raise ValueError("status_code must be a valid HTTP status code (100-599)")
         return value
+
+
+class OpenWeatherData(BaseModel):
+    """Class encapsulating all relevant data from OpenWeatherMap from each API call"""
+
+    timestamp: datetime
+    sun_data: list[SunData]
+    moon_data: list[MoonData]
+    cloud_cover: CloudData

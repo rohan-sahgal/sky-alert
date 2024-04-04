@@ -152,7 +152,7 @@ class TestSunDataParsing(unittest.TestCase):
         ] = MOCK_OPENWEATHER_RESPONSE_JSON
 
         # WHEN
-        response = self.ows.get_sun_data(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_sun_data_today(lat=sample_lat, lon=sample_lon)
 
         # THEN
         sunrise_datetime = datetime.datetime.utcfromtimestamp(
@@ -179,7 +179,7 @@ class TestSunDataParsing(unittest.TestCase):
         )
 
         # WHEN
-        response = self.ows.get_sun_data(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_sun_data_today(lat=sample_lat, lon=sample_lon)
 
         # THEN
         sunrise_datetime = datetime.datetime.utcfromtimestamp(
@@ -207,7 +207,7 @@ class TestSunDataParsing(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(KeyError):
-            response = self.ows.get_sun_data(lat=sample_lat, lon=sample_lon)
+            response = self.ows.get_sun_data_today(lat=sample_lat, lon=sample_lon)
 
 
 class TestMoonDataParsing(unittest.TestCase):
@@ -227,7 +227,7 @@ class TestMoonDataParsing(unittest.TestCase):
         ] = MOCK_OPENWEATHER_RESPONSE_JSON
 
         # WHEN
-        response = self.ows.get_moon_data(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_moon_data_today(lat=sample_lat, lon=sample_lon)
 
         # THEN
         moonrise_datetime = datetime.datetime.utcfromtimestamp(
@@ -256,7 +256,7 @@ class TestMoonDataParsing(unittest.TestCase):
         )
 
         # WHEN
-        response = self.ows.get_moon_data(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_moon_data_today(lat=sample_lat, lon=sample_lon)
 
         # THEN
         moonrise_datetime = datetime.datetime.utcfromtimestamp(
@@ -288,7 +288,7 @@ class TestMoonDataParsing(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(KeyError):
-            response = self.ows.get_moon_data(lat=sample_lat, lon=sample_lon)
+            response = self.ows.get_moon_data_today(lat=sample_lat, lon=sample_lon)
 
 
 class TestCloudDataParsing(unittest.TestCase):
@@ -308,7 +308,7 @@ class TestCloudDataParsing(unittest.TestCase):
         ] = MOCK_OPENWEATHER_RESPONSE_JSON
 
         # WHEN
-        response = self.ows.get_cloud_data(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_cloud_data_24_hours(lat=sample_lat, lon=sample_lon)
 
         # THEN
         cloud_data = []
@@ -332,7 +332,7 @@ class TestCloudDataParsing(unittest.TestCase):
         )
 
         # WHEN
-        response = self.ows.get_cloud_data(lat=sample_lat, lon=sample_lon)
+        response = self.ows.get_cloud_data_24_hours(lat=sample_lat, lon=sample_lon)
 
         # THEN
         cloud_data = []
@@ -357,4 +357,4 @@ class TestCloudDataParsing(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(KeyError):
-            response = self.ows.get_cloud_data(lat=sample_lat, lon=sample_lon)
+            response = self.ows.get_cloud_data_24_hours(lat=sample_lat, lon=sample_lon)

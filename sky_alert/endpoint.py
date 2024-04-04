@@ -18,19 +18,29 @@ def healthz() -> str:
     return "OK"
 
 
-@app.get("/openweather_sun_data")  # type: ignore
+@app.get("/openweather_sun_data_today")  # type: ignore
 def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
-    return ows.get_sun_data(lat=lat, lon=lon)
+    return ows.get_sun_data_today(lat=lat, lon=lon)
 
 
-@app.get("/openweather_moon_data")  # type: ignore
+@app.get("/openweather_sun_data_next_day")  # type: ignore
+def sun_data(lat: str = "0", lon: str = "0") -> Union[SunData, int]:
+    return ows.get_sun_data_next_day(lat=lat, lon=lon)
+
+
+@app.get("/openweather_moon_data_today")  # type: ignore
 def moon_data(lat: str = "0", lon: str = "0") -> Union[MoonData, int]:
-    return ows.get_moon_data(lat=lat, lon=lon)
+    return ows.get_moon_data_today(lat=lat, lon=lon)
+
+
+@app.get("/openweather_moon_data_next_day")  # type: ignore
+def moon_data(lat: str = "0", lon: str = "0") -> Union[MoonData, int]:
+    return ows.get_moon_data_next_day(lat=lat, lon=lon)
 
 
 @app.get("/openweather_cloud_data")  # type: ignore
 def cloud_data(lat: str = "0", lon: str = "0") -> Union[CloudData, int]:
-    return ows.get_cloud_data(lat=lat, lon=lon)
+    return ows.get_cloud_data_24_hours(lat=lat, lon=lon)
 
 
 @app.get("/get_and_write_openweather_data_to_file")  # type: ignore
@@ -40,3 +50,13 @@ def get_and_write_openweather_data_to_file(lat: str = "0", lon: str = "0") -> bo
         json.dump(ows.most_recent_weather[(lat, lon)], f)
         print("write to file succeeded")
     return True
+
+
+@app.get("/print_most_recent_weather")  # type: ignore
+def print_most_recent_weather(lat: str = "0", lon: str = "0") -> None:
+    ows.print_relevant_weather(lat=lat, lon=lon)
+
+
+@app.get("/print_valid_hours_for_next_24_hours")  # type: ignore
+def print_valid_hours_for_next_24_hours(lat: str = "0", lon: str = "0") -> None:
+    ows.check_next_24_hours(lat=lat, lon=lon)
