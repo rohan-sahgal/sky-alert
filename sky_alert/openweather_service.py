@@ -3,7 +3,11 @@ import requests
 from datetime import datetime, timedelta
 from typing import Any
 from sky_alert.protocol import SunData, MoonData, CloudData, OpenweatherResponse
-from sky_alert.constants import HOURS_IN_DAY, MOON_PHASE_THRESHOLD
+from sky_alert.constants import (
+    HOURS_IN_DAY,
+    MOON_PHASE_THRESHOLD,
+    CLOUD_COVER_THRESHOLD,
+)
 
 
 class OpenweatherService:
@@ -158,10 +162,14 @@ class OpenweatherService:
 
         json_data = self.most_recent_weather[(lat, lon)]
 
+        if "current" in json_data and isinstance(json_data["current"], dict):
+            current_data = json_data["current"]
+            cloud_data.append(current_data.get("clouds"))
+
         # Check for key existence at different levels
         if "hourly" in json_data and isinstance(json_data["hourly"], list):
             current_data = json_data["hourly"]
-            for i in range(HOURS_IN_DAY):
+            for i in range(HOURS_IN_DAY - 1):
                 current_hourly_cloud_data = current_data[i].get("clouds")
                 if current_hourly_cloud_data is not None:
                     cloud_data.append(current_hourly_cloud_data)
@@ -196,12 +204,17 @@ class OpenweatherService:
         intervals = []
         curr_dt = datetime.utcnow()  # current datetime
         curr_dt_top_of_hour = curr_dt.replace(microsecond=0, second=0, minute=0)
-        print(curr_dt_top_of_hour)
+        curr_cloud_data = self.get_cloud_data_24_hours(lat=lat, lon=lon)
+
         for i in range(0, HOURS_IN_DAY):
             hour_i = curr_dt_top_of_hour + timedelta(hours=i)
-            # if self.sun_criteria_valid(hour_i, lat, lon):
-            if self.moon_criteria_valid(hour_i, lat, lon):
-                # and self.cloud_criteria_valid(hour_i, lat, lon):
+            if (
+                self.sun_criteria_valid(hour_i, lat, lon)
+                and self.moon_criteria_valid(hour_i, lat, lon)
+                and self.cloud_criteria_valid(
+                    hour_index=i, curr_cloud_data=curr_cloud_data
+                )
+            ):
                 intervals.append(hour_i)
 
         print(intervals)
@@ -236,15 +249,6 @@ class OpenweatherService:
         moonset_next_day = moon_data_next_day.moonset
         moonphase_next_day = moon_data_next_day.moonphase
 
-        print(hour)
-        print(moonrise_today)
-        print(moonset_today)
-        print(moonphase_today)
-        print(moonrise_next_day)
-        print(moonset_next_day)
-        print(moonphase_next_day)
-        print("\n")
-
         # IF MOON IS DOWN
         if (
             (hour < moonrise_today)
@@ -268,10 +272,5 @@ class OpenweatherService:
 
         return False
 
-    def cloud_criteria_valid():
-        return False
-        # TODO: Rework such that we get new 24 hour range when the hour changes
-
-        # Check if current time interval has cloud level below threshold
-        # If so, return True
-        # Else, return False
+    def cloud_criteria_valid(self, hour_index: int, curr_cloud_data: CloudData) -> bool:
+        return curr_cloud_data.cloud_cover[hour_index] < CLOUD_COVER_THRESHOLD
